@@ -5,4 +5,6 @@ module Main (main) where
 import Math.Vector3 --import Vector3 functions and types
 
 main :: IO ()
-main = putStrLn "Hello, Haskell!"
+main = do
+	putStrLn "Hello, Haskell!"
+	show Vec3 1 2 3
