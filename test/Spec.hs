@@ -4,13 +4,26 @@ module Main (main) where
 
 import Math.Vector3
 import Test.QuickCheck hiding ((><)) --enables arbitrary and property checks and hides the ><
+import Physics.Types
+import Physics.Forces
 
+
+--INSTANCE CREATORS
 instance Arbitrary Vector3 where --creates random vector
   arbitrary = do 
     x <- arbitrary
     y <- arbitrary
     z <- arbitrary
     return (vec3 x y z)
+instance Arbitrary Body where
+  arbitrary = do
+    b <- arbitrary
+    m <- choose (1e-3, 1e24)
+    p <- arbitrary
+    v <- arbitrary
+    return (Body b m p v)
+
+-- VECTOR TESTS
 
 --check commutative property
 --since the adding is deterministic between two values, we don't need to check degree like associative property
@@ -41,13 +54,43 @@ prop_crossOrth u v =
   let crossProduct = u><v
   in abs (crossProduct <.> u) < 1e-9 && abs (crossProduct <.> v) < 1e-9
 
+-- PHYSICS TESTS
+
+prop_self_interact :: Body -> Bool --body does not exert a force on itself
+prop_self_interact b = calcPairAccel gravitationalConstant defaultSoftening b b == zeroV
+
+prop_newton_third_law :: Body-> Body -> Bool --every force has a equal and opposite reaction
+prop_newton_third_law b1 b2 =
+  let f1 = mass b1 *^ calcPairAccel gravitationalConstant defaultSoftening b1 b2
+      f2 = mass b2 *^ calcPairAccel gravitationalConstant defaultSoftening b2 b1
+      diff = f1 ^+^ f2 --since they are equal and opposite, the magnitudes should almost cancel each other out
+      magf1 = vecMag f1
+      relativeError = if magf1 > 1e-12 
+                      then vecMag diff / magf1 
+                      else vecMag diff
+    in relativeError < 1e-9
+
+prop_softening_limit :: Body->Body->Bool --all acclerations are atleast the defaultSoftening limit
+prop_softening_limit b1 b2 = 
+  let a = calcPairAccel gravitationalConstant defaultSoftening b1 b2
+      maxAccel = (gravitationalConstant * mass b2)/(defaultSoftening * defaultSoftening)
+  in vecMag a <= maxAccel + 1e-9
+
+prop_acceleration_length :: [Body] -> Bool
+prop_acceleration_length bs =
+  (length $ calcAllAccel gravitationalConstant defaultSoftening bs) == length bs
 
 main :: IO()
 main = do
-  putStrLn "Testing..."
+  putStrLn "Running Vector Tests..."
   quickCheck prop_add_commutative
   quickCheck prop_add_associative
   quickCheck prop_zero_identity
   quickCheck prop_self_magnitude
   quickCheck prop_crossOrth
+  putStrLn "Running Physics Tests..."
+  quickCheck prop_self_interact
+  quickCheck prop_newton_third_law
+  quickCheck prop_softening_limit
+  quickCheck prop_acceleration_length
 

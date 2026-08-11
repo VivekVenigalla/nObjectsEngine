@@ -69,6 +69,8 @@ library
     hs-source-dirs:   src
     exposed-modules:
         Math.Vector3
+        Physics.Types
+        Physics.Forces
         --include any additional files here
     build-depends:
         base >= 4.14 && < 5,
