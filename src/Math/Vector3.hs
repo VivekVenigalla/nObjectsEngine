@@ -31,7 +31,7 @@ data Vector3 = Vector3
 --create a instance of the show class to allow for Vector3 printing
 
 instance Show Vector3 where
- show (Vector3 x y z) = "vec" ++ showDouble x ++ " " ++ showDouble y ++ " " ++ showDouble z
+ show (Vector3 x y z) = "vec " ++ showDouble x ++ " " ++ showDouble y ++ " " ++ showDouble z
 
 --create function that creates the data object
 --NOTE HELPER FUNCTIONS SHOULD BE LOWERCASE
@@ -78,8 +78,23 @@ Vector3 ax ay az <.> Vector3 bx by bz = (ax*bx) + (ay*by) + (az*bz)
 
 --cross product(use determinant method)
 (><) :: Vector3 -> Vector3 -> Vector3
-Vector3 ax ay az >< Vector3 bx by bz = Vector3 (ay*bz - az*by) (ax*bz - az*bx) (ax*by - ay*bx)
+Vector3 ax ay az >< Vector3 bx by bz = Vector3 (ay*bz - az*by) (az*bx - ax*bz) (ax*by - ay*bx)
 
+--magnitude
+vecMag :: Vector3 -> R 
+vecMag v = sqrt(v <.> v)
+
+--sum of a list of vectors
+sumV :: [Vector3] -> Vector3
+sumV = foldr(^+^) zeroV --use the zeroV as a initial value and parse over the list(uses point free notation)
+
+--normalization
+vecNorm :: Vector3 -> Vector3
+vecNorm v
+  | mag == 0 = zeroV
+  | otherwise = v^/mag
+  where 
+    mag = vecMag v
 
 
 
