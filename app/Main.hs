@@ -1,4 +1,4 @@
-{#-OPTIONS -WALL #-} --turns on warnings for any type conflicts
+--{-# OPTIONS -WALL #-}since the cabal has the warnings turned on this is not needed
 
 
 module Main (main) where

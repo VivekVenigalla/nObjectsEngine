@@ -51,27 +51,52 @@ extra-doc-files:    CHANGELOG.md, README.md
 -- Extra source files to be distributed with the package, such as examples, or a tutorial module.
 -- extra-source-files:
 
-common warnings
-    ghc-options: -Wall
-
-executable nObjectsEngine
-    -- Import common warning flags.
-    import:           warnings
-
-    -- .hs or .lhs file containing the Main module.
-    main-is:          Main.hs
-
-    -- Modules included in this executable, other than Main.
-    -- other-modules:
-
-    -- LANGUAGE extensions used by modules in this package.
-    -- other-extensions:
-
-    -- Other library packages from which modules are imported.
-    build-depends:    base ^>=4.20.2.0
-
-    -- Directories containing source files.
-    hs-source-dirs:   app
-
-    -- Base language which the package is written in.
+--shared ghc warning flags
+common common-options
     default-language: Haskell2010
+    ghc-options:
+        -Wall
+        -Wcompat
+        -Widentities
+        -Wincomplete-record-updates
+        -Wincomplete-uni-patterns
+        -Wredundant-constraints
+        -O2
+
+--core library compoenent
+library
+    import:           common-options
+    hs-source-dirs:   src
+    exposed-modules:
+        Math.Vector3
+        --include any additional files here
+    build-depends:
+        base >= 4.14 && < 5,
+        vector >= 0.12
+
+
+--execution compoenent
+executable nObjectsEngine
+    --import warnings
+    import:           common-options
+    main-is:          Main.hs
+    hs-source-dirs:   app
+    build-depends:
+        base >= 4.14 && < 5,
+        nObjectsEngine
+    ghc-options:
+        -threaded
+        -rtsopts
+        -with-rtsopts=-N
+
+--test suite linkage
+test-suite nObjectsEngine-test
+    import:           common-options
+    type:             exitcode-stdio-1.0
+    main-is:          Spec.hs
+    hs-source-dirs:   test
+    build-depends:
+        base >= 4.14 && < 5,
+        nObjectsEngine,
+        QuickCheck >= 2.14
+        --this suite uses quick check
