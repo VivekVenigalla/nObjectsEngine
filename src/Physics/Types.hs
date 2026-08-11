@@ -8,8 +8,8 @@ import Math.Vector3
 data Body = Body
  {bodyID::{-# UNPACK #-} !Int,
   mass::{-# UNPACK #-} !R,
-  pos::!Vector3,
-  vel::!Vector3
+  pos:: !Vector3,
+  vel:: !Vector3
  }deriving(Eq)
 
 --create show instance
@@ -23,12 +23,12 @@ body = Body
 --system state data
 data SystemState = SystemState
  {time::{-# UNPACK #-} !R,
-  bodies::![Body] --list of bodies
+  bodies:: ![Body] --list of bodies
  }deriving(Eq)
 
 --create show instance
-instance Show Body where
- show (SystemState t bs) = "SystemState: t " ++ showDouble t ++ ", # Bodies " ++ show $ length $ bs ++ "\n" ++ unlines (map (\b -> "  " ++ show b) bs)
+instance Show SystemState where
+ show (SystemState t bs) = "SystemState: t " ++ showDouble t ++ ", # Bodies " ++ (show $ length $ bs) ++ "\n" ++ unlines (map (\b -> "  " ++ show b) bs)
  --iterate over the body list and use the map feature
 
 --create system state function
