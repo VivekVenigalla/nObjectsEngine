@@ -6,7 +6,7 @@ import Math.Vector3
 import Test.QuickCheck hiding ((><)) --enables arbitrary and property checks and hides the ><
 import Physics.Types
 import Physics.Forces
-
+import Physics.Integrator
 
 --INSTANCE CREATORS
 instance Arbitrary Vector3 where --creates random vector
@@ -80,6 +80,39 @@ prop_acceleration_length :: [Body] -> Bool
 prop_acceleration_length bs =
   (length $ calcAllAccel gravitationalConstant defaultSoftening bs) == length bs
 
+--Integrator Tests
+prop_energy_consv :: R --since we are not using any arbitrary values, we only create a bool type func
+prop_energy_consv =
+  let m1 = 1e30 --central mass
+      m2 = 1e24 --orbiting mass
+      totalMass = m1+m2
+      distance = 1e11
+
+      --get the initial velocity using the centripetal acceleration rule (F gravity = F centripetal force for orbit)
+      -- v = sqrt(G(m1+m2)/r)
+      initialV = sqrt (gravitationalConstant * (m1 + m2) / distance)
+
+      --create initial body states
+      central = Body 1 m1 zeroV zeroV --central mass is in the origin and starts with no velocity
+      orb = Body 2 m2 (vec3 distance 0 0) (vec3 0 initialV 0) --orbiting mass is along the x axis and has a initial velocty pointing up
+
+      initialState = SystemState 0.0 [central, orb] --create initial system state
+      initialEnergy = totalEnergy gravitationalConstant defaultSoftening (bodies initialState)--obtain initial energy
+
+      period = 2.0 * pi * sqrt ((distance*distance*distance)/(gravitationalConstant*totalMass))
+      dt = period/1000 --ensures there is 1000 steps for a orbit
+
+      finalState = iterate (stepSystem gravitationalConstant defaultSoftening dt) initialState !! 1000
+
+      finalEnergy = totalEnergy gravitationalConstant defaultSoftening (bodies finalState)
+
+      relativeError = abs(finalEnergy-initialEnergy) / abs initialEnergy
+  in relativeError --large error because of large period of execution
+
+
+
+
+
 main :: IO()
 main = do
   putStrLn "Running Vector Tests..."
@@ -93,4 +126,11 @@ main = do
   quickCheck prop_newton_third_law
   quickCheck prop_softening_limit
   quickCheck prop_acceleration_length
-
+  putStrLn "Running Integrator Tests..."
+  --if prop_energy_consv 
+    --then putStrLn "+++ OK, passed Kepler Conservation Test "
+    --else putStrLn "+++ FAILED, failed Kepler Conservation Test "
+  putStrLn ("Kepler Conservation Test " ++ show prop_energy_consv)
+  if prop_energy_consv < 1e-3
+    then putStrLn ("+++ OK, passed 1 test.")
+    else putStrLn ("--- FAILED")

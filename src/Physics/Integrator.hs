@@ -16,12 +16,12 @@ stepBody dt b acc =
 stepSystem::R-> R-> R->SystemState->SystemState
 stepSystem g eps dt (SystemState t bodiesList) = 
     let accList = calcAllAccel g eps bodiesList
-        steppedBodies = zipWith (stepBody t) bodiesList accList --since bodieslist and accList are the same size, we use zipWith to use stepBody for each pair of body and acceleration vector
+        steppedBodies = zipWith (stepBody dt) bodiesList accList --since bodieslist and accList are the same size, we use zipWith to use stepBody for each pair of body and acceleration vector
     in SystemState(t+dt) steppedBodies
 
 totalKE::[Body]->R --total kinetic energy
 totalKE bs =
-    sum [0.5 * mass b * (vecMag $ vel b) * (vecMag $ vel b) | b <- bs]
+    sum [0.5 * mass b * (vel b <.> vel b) | b <- bs]
 
 pairPE:: R-> R -> Body -> Body -> R 
 pairPE g eps b1 b2

@@ -71,6 +71,7 @@ library
         Math.Vector3
         Physics.Types
         Physics.Forces
+        Physics.Integrator
         --include any additional files here
     build-depends:
         base >= 4.14 && < 5,
