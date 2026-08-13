@@ -73,10 +73,13 @@ library
         Physics.Forces
         Physics.Integrator
         Physics.Simulator
+        Physics.Presets
         --include any additional files here
     build-depends:
         base >= 4.14 && < 5,
-        vector >= 0.12
+        vector >= 0.12,
+        directory >= 1.3,
+        random >= 1.2
 
 
 --execution compoenent
@@ -88,7 +91,8 @@ executable nObjectsEngine
     build-depends:
         base >= 4.14 && < 5,
         nObjectsEngine,
-        directory>=1.3
+        directory >= 1.3,
+        random >= 1.2
     ghc-options:
         -threaded
         -rtsopts
