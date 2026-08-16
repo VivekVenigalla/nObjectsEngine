@@ -7,10 +7,14 @@ A high-performance $N$-body gravitational physics engine written in Haskell. `nO
 ## Technical & Physics Architecture
 
 * **Gravitational Field Evaluation:** Computes pairwise Newtonian gravity with a Plummer softening parameter ($\epsilon$) to prevent numerical singularities during close stellar encounters:
+```math
   $$\mathbf{F}_{ij} = -G \frac{m_i m_j}{(\Vert{}\mathbf{r}_{ij}\Vert{}^2 + \epsilon^2)^{3/2}} \mathbf{r}_{ij}$$
+```
 * **Symplectic Integrator:** Employs semi-implicit **Euler-Cromer integration** (updating velocity prior to position) to maintain phase-space volume preservation and bound long-term orbital energy drift.
 * **Conservation Monitoring:** Computes total mechanical energy ($E = K + U$) at every step to quantify relative numerical drift over simulation horizons:
+```math
   $$K = \sum \frac{1}{2}m_i \Vert{}\mathbf{v}_i\Vert{}^2, \quad U = -\sum_{i < j} \frac{G m_i m_j}{\sqrt{\Vert{}\mathbf{r}_{ij}\Vert{}^2 + \epsilon^2}}$$
+  ```
 
 ---
 
