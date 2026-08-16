@@ -40,7 +40,7 @@ nObjectsEngine/
 ```
 ---
 
-Tools & Tech Stack
+## Tools & Tech Stack
 • Language: Haskell (GHC 9.10+)
 • Build System: Cabal
 • CLI Library: optparse-applicative
@@ -49,30 +49,32 @@ Tools & Tech Stack
 Setup & Building
 Ensure GHC and Cabal are installed on your system.
 
-# Clone repository
+## Project setup
+
+### Clone repository
 git clone [https://github.com/your-username/nObjectsEngine.git](https://github.com/your-username/nObjectsEngine.git)
 cd nObjectsEngine
 
-# Build project library and executable
+### Build project library and executable
 cabal build
 
-# Run test suite
+### Run test suite
 cabal test --test-show-details=direct
 
-Running Simulations
+## Running Simulations
 Run the executable with Cabal and customize parameters using command-line options:
-# 1. Earth-Sun Kepler Orbit (Default)
+### 1. Earth-Sun Kepler Orbit (Default)
 cabal run nObjectsEngine
 
-# 2. Figure-8 Three-Body Choreography
+### 2. Figure-8 Three-Body Choreography
 cabal run nObjectsEngine -- --preset figure8 --steps 5000 --dt 0.001 -o output/figure8.csv
 
-# 3. Plummer Sphere Galactic Cluster (250 Bodies)
+### 3. Plummer Sphere Galactic Cluster (250 Bodies)
 cabal run nObjectsEngine -- --preset plummer --bodies 250 --steps 2000 -o output/cluster.csv
 
-# Display CLI Help Options
+### Display CLI Help Options
 cabal run nObjectsEngine -- --help
 
-Output Data Format
+## Output Data Format
 Simulation outputs stream line-by-line to CSV with the following header layout:
 time,id,mass,pos_x,pos_y,pos_z,vel_x,vel_y,vel_z
